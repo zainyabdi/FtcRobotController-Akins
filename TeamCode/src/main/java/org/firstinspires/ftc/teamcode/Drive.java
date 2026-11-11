@@ -19,10 +19,19 @@ public class Drive extends LinearOpMode {
         DcMotor Intake = hardwareMap.dcMotor.get("Intake");
         Servo IntkR = hardwareMap.get(Servo.class, "IntkR");
         Servo IntkL = hardwareMap.get(Servo.class, "IntkL");
+        DcMotor transfer = hardwareMap.dcMotor.get("transfer");
+        DcMotor Shoot1 = hardwareMap.dcMotor.get("Shoot1");
+        DcMotor Shoot2 = hardwareMap.dcMotor.get("Shoot2");
+
 
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        Shoot1.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
 
@@ -35,9 +44,7 @@ public class Drive extends LinearOpMode {
             boolean a = gamepad1.a;
             boolean b = gamepad1.b;
 
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
+
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double frontLeftPower = (y + x + rx) / denominator;
             double backLeftPower = (y - x + rx) / denominator;
@@ -51,19 +58,28 @@ public class Drive extends LinearOpMode {
 
 
             if(b) {
-                Intake.setPower(0);
+                Intake.setPower(0.5);
+                transfer.setPower(0.5);
                 IntkL.setPosition(3);
                 IntkR.setPosition(3);
             }
             else if(a) {
                 Intake.setPower(-0.5);
+                transfer.setPower(-0.5);
                 IntkL.setPosition(-3);
                 IntkR.setPosition(-3);
             }
+            else if(gamepad1.x) {
+                Shoot1.setPower(0.8);
+                Shoot2.setPower(0.8);
+            }
             else {
                 Intake.setPower(0);
+                transfer.setPower(0);
                 IntkL.setPosition(0.5);
                 IntkR.setPosition(0.5);
+                Shoot1.setPower(0);
+                Shoot2.setPower(0);
             }
         }
     }
